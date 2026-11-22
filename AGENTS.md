@@ -6,6 +6,7 @@ It reads the subscribers, checks an issue, and sends it to a practice mail serve
 - Use uv for everything (`uv add`, `uv run`, `uv sync`, etc.) — never call `pip` or a bare `python` directly.
 - Never use a real person's email address. Use `@example.com` for subscriber data, and `@resend.dev` for practice sends.
 - Commit and push after every step.
+- Keep `notes.md` updated with every question I ask and the answer, as we go. Separate each question-and-answer pair with `---`.
 
 ## How I learn
 
