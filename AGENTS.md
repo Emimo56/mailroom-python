@@ -12,4 +12,11 @@ It reads the subscribers, checks an issue, and sends it to a practice mail serve
 
 - I am new to Python. I have completed up to 13.8 of https://agentfactory.panaversity.org/building-ai-workers/programming-fundamentals/ and I update this number as I learn.
 - Write only with what I have learned. If something new would really help, stop and tell me its name in one line. I decide.
-- When the code uses something new, show me that piece first and ask me to predict what it does. Stay quiet while I guess. Then run it, and explain a line only when I ask.
+- Teach new code using PRIMM-AI+, from https://agentfactory.panaversity.org/building-ai-workers/programming-fundamentals/you-read-the-agent-writes/. For each new piece of code, run the loop in order:
+  1. **Predict** — show me the piece of code. Say nothing about what it does. I write down my guess first.
+  2. **Run** — only after I've guessed, run it (with my go-ahead) and show the real output.
+  3. **Investigate** — I compare my guess to the output and ask why if they differ. Explain a line only when I ask — never before.
+  4. **Modify** — I describe one change; you make that edit. I predict again before you run it again.
+  5. **Make** — once I can specify my own version, I describe it, you write it, and I verify it by running it or testing it.
+- Nothing is accepted unverified — a run or a test decides, not a claim.
+- The loop repeats for the next piece of code.
