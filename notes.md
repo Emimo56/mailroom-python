@@ -17,3 +17,9 @@ Q: Before writing the three functions in mailroom.py, write tests in check.py fo
 A: Wrote three tests in `check.py`, importing `read_subscribers`, `count_emails`, and `count_daily_drinkers` from a `mailroom` module that doesn't exist yet. Each test just calls the function and asserts the expected result, with an f-string message naming what was expected and what was actually returned — no row-parsing logic duplicated in the test file. Ran `uv run pytest check.py -v` — it fails at collection with `ModuleNotFoundError: No module named 'mailroom'`, which is expected since `mailroom.py` hasn't been written yet.
 
 ---
+
+Q: What is the difference between `uv run python check.py` and `uv run pytest check.py -v`, and why the `-v` flag?
+
+A: `uv run python check.py` hands the file to the plain `python` interpreter, which just executes the file top to bottom. `check.py` only *defines* functions named `test_...` — defining a function doesn't call it — so nothing in the file ever runs, and the silence means "nothing happened," not "it passed." `uv run pytest check.py -v` hands the file to `pytest` instead, which scans it for anything named `test_...`, calls each one itself, and reports pass/fail for each. `-v` means "verbose": without it, pytest prints one dot per passing test (and an `F` per failing one) on a single line; with it, pytest prints each test's full name plus PASSED/FAILED on its own line, which is easier to read while still learning what each check does. The command to trust for "did it actually pass?" is `uv run pytest check.py -v`.
+
+---
