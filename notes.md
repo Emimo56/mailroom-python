@@ -12,8 +12,8 @@ A: They get exactly what's tracked in git — no virtual environment or lock fil
 
 ---
 
-Q: Before writing the code to read subscribers from the data dir, write tests for: output type is a string, total emails is 24, daily-drinkers group has 8 rows. Save in check.py.
+Q: Before writing the three functions in mailroom.py, write tests in check.py for: read_subscribers' output type is a string, total emails is 24, and the daily-drinkers group has 8 rows. Each test should check behavior only, not re-implement the counting logic, and should state the expected outcome when it fails.
 
-A: Wrote three tests in `check.py`, importing `read_subscribers` from a `mailroom` module that doesn't exist yet: `test_read_subscribers_returns_a_string` checks `isinstance(result, str)`, `test_total_number_of_emails_is_24` counts the data rows (one email per row) and asserts 24, `test_daily_drinkers_group_has_8_rows` counts rows where the group field is `daily-drinkers` and asserts 8. Ran `uv run pytest check.py -v` — it fails at collection with `ModuleNotFoundError: No module named 'mailroom'`, which is expected since `mailroom.py` hasn't been written yet.
+A: Wrote three tests in `check.py`, importing `read_subscribers`, `count_emails`, and `count_daily_drinkers` from a `mailroom` module that doesn't exist yet. Each test just calls the function and asserts the expected result, with an f-string message naming what was expected and what was actually returned — no row-parsing logic duplicated in the test file. Ran `uv run pytest check.py -v` — it fails at collection with `ModuleNotFoundError: No module named 'mailroom'`, which is expected since `mailroom.py` hasn't been written yet.
 
 ---
