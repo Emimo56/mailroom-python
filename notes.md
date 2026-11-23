@@ -17,3 +17,9 @@ Q: In check.py, why does `test_total_number_of_emails_is_24` count rows instead 
 A: Each row in `data/subscribers.csv` is one subscriber with exactly one email address, so counting rows is the same as counting emails here.
 
 ---
+
+Q: In `test_total_number_of_emails_is_24`, if `assert "@" in email` fails partway through, does that row just not get counted?
+
+A: No — `assert` doesn't skip a row, it raises an error immediately and stops the test right there, so the rest of the loop and the final `assert count == 24` never run. To only count valid emails (ones with `@`) instead of crashing on the first invalid one, the test uses `if "@" in email: count = count + 1`, and only asserts the total count at the end.
+
+---
