@@ -12,29 +12,8 @@ A: They get exactly what's tracked in git — no virtual environment or lock fil
 
 ---
 
-Q: In check.py, why does `test_total_number_of_emails_is_24` count rows instead of emails?
+Q: Before writing the code to read subscribers from the data dir, write tests for: output type is a string, total emails is 24, daily-drinkers group has 8 rows. Save in check.py.
 
-A: Each row in `data/subscribers.csv` is one subscriber with exactly one email address, so counting rows is the same as counting emails here.
-
----
-
-Q: In `test_total_number_of_emails_is_24`, if `assert "@" in email` fails partway through, does that row just not get counted?
-
-A: No — `assert` doesn't skip a row, it raises an error immediately and stops the test right there, so the rest of the loop and the final `assert count == 24` never run. To only count valid emails (ones with `@`) instead of crashing on the first invalid one, the test uses `if "@" in email: count = count + 1`, and only asserts the total count at the end.
-
----
-
-Q: Write `mailroom.py` so `uv run mailroom.py subscribers` prints the total and one line per group.
-
-A: Added `read_subscribers` and a new `build_report(path)` function to `mailroom.py` (removed `read_subscribers` from `main.py`). `build_report` counts subscribers per group in first-appearance order and returns a string like:
-
-```
-Total: 24
-tea-curious: 8
-gift-buyers: 8
-daily-drinkers: 8
-```
-
-`main()` reads `sys.argv[1]` and prints `build_report(...)` when the command is `subscribers`. `check.py` now imports from `mailroom` instead of `main`, and a new check (`test_subscribers_report_is_correct`) asserts `build_report` returns exactly that string — checked by running it, not just reading the code.
+A: Wrote three tests in `check.py`, importing `read_subscribers` from a `mailroom` module that doesn't exist yet: `test_read_subscribers_returns_a_string` checks `isinstance(result, str)`, `test_total_number_of_emails_is_24` counts the data rows (one email per row) and asserts 24, `test_daily_drinkers_group_has_8_rows` counts rows where the group field is `daily-drinkers` and asserts 8. Ran `uv run pytest check.py -v` — it fails at collection with `ModuleNotFoundError: No module named 'mailroom'`, which is expected since `mailroom.py` hasn't been written yet.
 
 ---

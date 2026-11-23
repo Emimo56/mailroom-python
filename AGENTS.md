@@ -20,4 +20,3 @@ It reads the subscribers, checks an issue, and sends it to a practice mail serve
   5. **Make** — once I can specify my own version, I describe it, you write it, and I verify it by running it or testing it.
 - Nothing is accepted unverified — a run or a test decides, not a claim.
 - The loop repeats for the next piece of code.
-- Behaviors first: I give the expected answers, you write them as checks, show them failing, then write the code.

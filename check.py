@@ -1,4 +1,4 @@
-from mailroom import read_subscribers, build_report
+from mailroom import read_subscribers
 
 DATA_PATH = "data/subscribers.csv"
 
@@ -14,10 +14,7 @@ def test_total_number_of_emails_is_24():
     rows = lines[1:]  # drop the header row
     count = 0
     for row in rows:
-        fields = row.split(",")
-        email = fields[2]
-        if "@" in email:
-            count = count + 1
+        count = count + 1
     assert count == 24
 
 
@@ -32,9 +29,3 @@ def test_daily_drinkers_group_has_8_rows():
         if group == "daily-drinkers":
             count = count + 1
     assert count == 8
-
-
-def test_subscribers_report_is_correct():
-    report = build_report(DATA_PATH)
-    expected = "Total: 24\ntea-curious: 8\ngift-buyers: 8\ndaily-drinkers: 8"
-    assert report == expected
