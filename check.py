@@ -1,4 +1,4 @@
-from main import read_subscribers
+from mailroom import read_subscribers, build_report
 
 DATA_PATH = "data/subscribers.csv"
 
@@ -32,3 +32,9 @@ def test_daily_drinkers_group_has_8_rows():
         if group == "daily-drinkers":
             count = count + 1
     assert count == 8
+
+
+def test_subscribers_report_is_correct():
+    report = build_report(DATA_PATH)
+    expected = "Total: 24\ntea-curious: 8\ngift-buyers: 8\ndaily-drinkers: 8"
+    assert report == expected
