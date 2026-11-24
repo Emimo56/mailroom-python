@@ -8,6 +8,7 @@ It reads the subscribers, checks an issue, and sends it to a practice mail serve
 - Commit and push after every step.
 - Behaviors first: I give the expected answers, you write them as checks, show them failing, then write the code.
 - Keep `notes.md` updated with every question I ask and the answer, as we go. Separate each question-and-answer pair with `---`.
+- Never read today's date inside the logic. Pass the run date in.
 
 ## How I learn
 
