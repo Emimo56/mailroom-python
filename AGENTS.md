@@ -10,6 +10,7 @@ It reads the subscribers, checks an issue, and sends it to a practice mail serve
 - Keep `notes.md` updated with every question I ask and the answer, as we go. Separate each question-and-answer pair with `---`.
 - Never read today's date inside the logic. Pass the run date in.
 - When something breaks, show me the full error before changing anything.
+- I decide the test cases and their answers. Never change an expected answer to make a test pass.
 
 ## How I learn
 
