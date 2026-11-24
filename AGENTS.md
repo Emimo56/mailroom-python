@@ -6,7 +6,7 @@ It reads the subscribers, checks an issue, and sends it to a practice mail serve
 - Use uv for everything (`uv add`, `uv run`, `uv sync`, etc.) — never call `pip` or a bare `python` directly.
 - Never use a real person's email address. Use `@example.com` for subscriber data, and `@resend.dev` for practice sends.
 - Commit and push after every step.
-- Behaviors first: I give the expected answers, you write them as checks, show them failing, then write the code.
+- Behaviors first: I give the expected answers, you write them as tests, show them failing, then write the code.
 - Keep `notes.md` updated with every question I ask and the answer, as we go. Separate each question-and-answer pair with `---`.
 - Never read today's date inside the logic. Pass the run date in.
 - When something breaks, show me the full error before changing anything.
