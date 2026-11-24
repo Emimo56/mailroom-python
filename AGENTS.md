@@ -9,6 +9,7 @@ It reads the subscribers, checks an issue, and sends it to a practice mail serve
 - Behaviors first: I give the expected answers, you write them as checks, show them failing, then write the code.
 - Keep `notes.md` updated with every question I ask and the answer, as we go. Separate each question-and-answer pair with `---`.
 - Never read today's date inside the logic. Pass the run date in.
+- When something breaks, show me the full error before changing anything.
 
 ## How I learn
 
