@@ -59,3 +59,15 @@ Q: Add `subscribers --since 2026-10-01`, an exact date instead of a number of da
 A: 12 — Diego Alvarez, Ana Silva, Grace Okafor, Jonas Berg, Hiroshi Tanaka, Amara Diallo, Noah Fischer, Zainab Hussain, Mateo Rossi, Elif Demir, Yusuf Celik, Kwame Asante. (First guess was 10 — miscounted partway through the sorted list and missed the last two.)
 
 ---
+
+Q: Why does Mailroom pass the run date into functions instead of letting each function call `date.today()` itself?
+
+A: This is a CLI tool, and we want to control and run it when we want — passing the run date in means Mailroom can be run against any date we choose (today, a past date, a future date), not only whatever `date.today()` happens to return at the moment it runs.
+
+---
+
+Q: Why is it the test functions that pick the exact dates to pass in, rather than the test calling `date.today()` and checking whatever comes back?
+
+A: Because it keeps the test result the same every time it runs — a fixed run date makes the test deterministic, so it passes the same way today, tomorrow, or a year from now, instead of its expected answer silently changing with the calendar.
+
+---
