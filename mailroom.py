@@ -57,6 +57,18 @@ def count_recent_subscribers(text, run_date, since_days):
     return count
 
 
+def count_subscribers_since(text, since_date, run_date):
+    lines = text.strip().split("\n")
+    rows = lines[1:]
+    count = 0
+    for row in rows:
+        fields = row.split(",")
+        joined_on = date.fromisoformat(fields[4])
+        if joined_on >= since_date and joined_on <= run_date:
+            count = count + 1
+    return count
+
+
 def next_send_date(run_date):
     if run_date.month == 12:
         year = run_date.year + 1
@@ -75,11 +87,15 @@ if __name__ == "__main__":
     options = sys.argv[2:]
 
     since_days = None
+    since_text = None
     run_date_text = None
     i = 0
     while i < len(options):
         if options[i] == "--since-days":
             since_days = int(options[i + 1])
+            i = i + 2
+        elif options[i] == "--since":
+            since_text = options[i + 1]
             i = i + 2
         elif options[i] == "--run-date":
             run_date_text = options[i + 1]
@@ -94,7 +110,11 @@ if __name__ == "__main__":
 
     if command == "subscribers":
         text = read_subscribers("data/subscribers.csv")
-        if since_days:
+        if since_text:
+            since_date = date.fromisoformat(since_text)
+            count = count_subscribers_since(text, since_date, run_date)
+            print(f"Subscribers since {since_date}: {count}")
+        elif since_days:
             count = count_recent_subscribers(text, run_date, since_days)
             print(f"Subscribers in the last {since_days} days: {count}")
         else:

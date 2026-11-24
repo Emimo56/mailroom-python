@@ -6,6 +6,7 @@ from mailroom import (
     count_by_group,
     build_subscribers_report,
     count_recent_subscribers,
+    count_subscribers_since,
     next_send_date,
 )
 
@@ -40,6 +41,12 @@ def test_recent_subscribers_in_last_30_days_is_7():
     text = read_subscribers(DATA_PATH)
     result = count_recent_subscribers(text, date(2026, 11, 20), 30)
     assert result == 7, f"expected 7 recent subscribers, got {result}"
+
+
+def test_subscribers_since_2026_10_01_is_12():
+    text = read_subscribers(DATA_PATH)
+    result = count_subscribers_since(text, date(2026, 10, 1), date(2026, 11, 20))
+    assert result == 12, f"expected 12 subscribers since 2026-10-01, got {result}"
 
 
 def test_next_send_after_2026_11_20_is_first_monday_of_december():

@@ -47,3 +47,15 @@ Q: Why does `next_send_date` start from `date(year, month, 1)` and then check if
 A: Because we want the *first* Monday of next month, we need to start searching from the earliest possible day in that month — day 1 — and then step forward one day at a time (`candidate + timedelta(days=1)`) until `.weekday() == 0`. If the 1st itself is already a Monday, the loop body never runs and day 1 is returned as-is.
 
 ---
+
+Q: Would comparing the text `"2026-10-21"` work too? When would it break?
+
+A: It works for this data, because ISO format (`YYYY-MM-DD`, zero-padded) happens to put the digits in the same order as calendar time — `"2026-10-21" <= "2026-11-20"` really is `True`. It breaks without zero-padding (`"2026-9-5" < "2026-10-21"` comes back `False`, since `"9"` sorts after `"1"` character by character) or with a different date format. More importantly, strings can't do date arithmetic — no subtracting 30 days, no `.weekday()` — so `count_recent_subscribers` and `next_send_date` need `date` objects regardless.
+
+---
+
+Q: Add `subscribers --since 2026-10-01`, an exact date instead of a number of days. How many subscribers joined on or after 2026-10-01, as of run date 2026-11-20?
+
+A: 12 — Diego Alvarez, Ana Silva, Grace Okafor, Jonas Berg, Hiroshi Tanaka, Amara Diallo, Noah Fischer, Zainab Hussain, Mateo Rossi, Elif Demir, Yusuf Celik, Kwame Asante. (First guess was 10 — miscounted partway through the sorted list and missed the last two.)
+
+---
