@@ -69,27 +69,6 @@ def count_subscribers_since(text, since_date, run_date):
     return count
 
 
-def check_subject(issue_text):
-    lines = issue_text.split("\n")
-    subject_line = None
-    for line in lines:
-        if line.startswith("Subject:"):
-            subject_line = line
-            break
-
-    problems = []
-    if subject_line is None:
-        problems.append("Subject line is missing")
-        return problems
-
-    subject = subject_line[len("Subject:"):].strip()
-    if subject == "":
-        problems.append("Subject is empty")
-    elif len(subject) > 50:
-        problems.append("Subject is too long")
-    return problems
-
-
 def next_send_date(run_date):
     if run_date.month == 12:
         year = run_date.year + 1
