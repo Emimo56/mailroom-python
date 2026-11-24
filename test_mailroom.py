@@ -8,6 +8,7 @@ from mailroom import (
     count_recent_subscribers,
     count_subscribers_since,
     next_send_date,
+    check_subject,
 )
 
 DATA_PATH = "data/subscribers.csv"
@@ -59,3 +60,39 @@ def test_next_send_after_2026_12_07_is_first_monday_of_january():
     result = next_send_date(date(2026, 12, 7))
     expected = date(2027, 1, 4)
     assert result == expected, f"expected {expected}, got {result}"
+
+
+def test_subject_with_no_problems_has_no_problems():
+    issue_text = "Subject: The Steep Club opens Monday\n"
+    result = check_subject(issue_text)
+    assert result == [], f"expected no problems, got {result}"
+
+
+def test_subject_at_50_characters_has_no_problems():
+    issue_text = "Subject: Your Steep Club box ships on Monday with new teas.\n"
+    result = check_subject(issue_text)
+    assert result == [], f"expected no problems, got {result}"
+
+
+def test_subject_at_51_characters_is_too_long():
+    issue_text = "Subject: Your Steep Club box ships on Monday with fresh teas\n"
+    result = check_subject(issue_text)
+    assert result == ["Subject is too long"], f"expected one too-long problem, got {result}"
+
+
+def test_empty_subject_is_empty():
+    issue_text = "Subject: \n"
+    result = check_subject(issue_text)
+    assert result == ["Subject is empty"], f"expected one empty problem, got {result}"
+
+
+def test_subject_of_only_spaces_is_empty():
+    issue_text = "Subject:     \n"
+    result = check_subject(issue_text)
+    assert result == ["Subject is empty"], f"expected one empty problem, got {result}"
+
+
+def test_no_subject_line_at_all_is_missing():
+    issue_text = "Preview: Your monthly tea box, chosen by our blenders.\n"
+    result = check_subject(issue_text)
+    assert result == ["Subject line is missing"], f"expected one missing problem, got {result}"

@@ -77,3 +77,9 @@ Q: Explain the error from a hand-typed `2026-02-30` in Jonas Berg's `joined_on` 
 A: `date.fromisoformat("2026-02-30")` on line 54 of `count_recent_subscribers` (`mailroom.py`) tried to build a real calendar `date` out of that string. February 2026 only has 28 days, so day 30 doesn't exist for that month. `date.fromisoformat` checks this and raises `ValueError: day is out of range for month` instead of returning a bad or made-up date.
 
 ---
+
+Q: Write `check_subject(issue_text)`, which returns a list of problems (empty when the subject is fine), for these cases: "The Steep Club opens Monday" (no problems), a 50-character subject (no problems), a 51-character subject (too long), an empty subject (empty), a subject of only spaces (empty), no Subject line at all (missing).
+
+A: Wrote the six tests first in `test_mailroom.py`, importing `check_subject` from `mailroom` — ran `uv run pytest test_mailroom.py -v` and got an `ImportError: cannot import name 'check_subject'` since the function didn't exist yet. Then wrote `check_subject` in `mailroom.py`: it looks for the first line starting with `"Subject:"`; no such line means `["Subject line is missing"]`; otherwise it takes the text after the colon and strips it — empty after stripping means `["Subject is empty"]` (this covers both a truly empty subject and one of only spaces, since stripping spaces also gives `""`), and longer than 50 characters means `["Subject is too long"]`. All 14 tests pass now, including the 8 that existed before.
+
+---
