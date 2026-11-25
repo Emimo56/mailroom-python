@@ -11,7 +11,7 @@ It reads the subscribers, checks an issue, and sends it to a practice mail serve
 - Never read today's date inside the logic. Pass the run date in.
 - When something breaks, show me the full error before changing anything.
 - I decide the test cases and their answers. Never change an expected answer to make a test pass.
-- Subject length is whatever Python's `len()` counts — code points, not visible characters. An emoji made of multiple code points (e.g. a skin-tone modifier) counts as more than one character.
+- Subject and preview length count what Python's `len()` counts — code points, not visible characters. An emoji made of multiple code points (e.g. a skin-tone modifier) counts as more than one character.
 - Subject line must be the file's first line, not just "a line starting with `Subject:`" anywhere in the file.
 - A greeting only counts if `{{first_name}}` appears on a line starting with `"Hi"` — not anywhere else in the file.
 - A link is any occurrence of `http://` or `https://`, not only Markdown-style `[text](http...)` links.
