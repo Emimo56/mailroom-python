@@ -119,3 +119,15 @@ Q: `check_footer` requires the exact phrase `"You're getting this because"` plus
 A: Any wording — it just needs some disclosure and some mention of unsubscribing, not that exact phrase.
 
 ---
+
+Q: Should a footer/unsubscribe link count toward the "exactly one link" limit, or does "link" mean only links in the body?
+
+A: Body only — a footer/unsubscribe link should not count toward the one-link limit.
+
+---
+
+Q: `check_footer` only checks that the substring `"Unsubscribe:"` appears anywhere in the whole text — not that it contains the literal `{{unsubscribe_url}}` placeholder, and not that the footer is at the end of the file, after the sign-off. Should the check require the placeholder text and the end-of-file position?
+
+A: Yes, require both.
+
+---

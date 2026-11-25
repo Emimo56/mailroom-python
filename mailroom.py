@@ -117,8 +117,14 @@ def check_greeting(issue_text):
 
 
 def check_links(issue_text):
+    link_count = 0
+    i = 0
+    while i < len(issue_text):
+        if issue_text[i:i + len("](http")] == "](http":
+            link_count = link_count + 1
+        i = i + 1
+
     problems = []
-    link_count = issue_text.count("](http")
     if link_count == 0:
         problems.append("Link is missing")
     elif link_count > 1:
@@ -144,11 +150,16 @@ def check_footer(issue_text):
 
 def check_issue(issue_text):
     problems = []
-    problems = problems + check_subject(issue_text)
-    problems = problems + check_preview(issue_text)
-    problems = problems + check_greeting(issue_text)
-    problems = problems + check_links(issue_text)
-    problems = problems + check_footer(issue_text)
+    for problem in check_subject(issue_text):
+        problems.append(problem)
+    for problem in check_preview(issue_text):
+        problems.append(problem)
+    for problem in check_greeting(issue_text):
+        problems.append(problem)
+    for problem in check_links(issue_text):
+        problems.append(problem)
+    for problem in check_footer(issue_text):
+        problems.append(problem)
     return problems
 
 
