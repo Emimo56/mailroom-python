@@ -9,6 +9,7 @@ from mailroom import (
     count_subscribers_since,
     next_send_date,
     check_subject,
+    check_issue,
 )
 
 DATA_PATH = "data/subscribers.csv"
@@ -96,3 +97,41 @@ def test_no_subject_line_at_all_is_missing():
     issue_text = "Preview: Your monthly tea box, chosen by our blenders.\n"
     result = check_subject(issue_text)
     assert result == ["Subject line is missing"], f"expected one missing problem, got {result}"
+
+
+def read_issue(path):
+    file = open(path)
+    text = file.read()
+    file.close()
+    return text
+
+
+def test_issue_01_has_no_problems():
+    issue_text = read_issue("issues/issue-01.md")
+    result = check_issue(issue_text)
+    assert result == [], f"expected no problems, got {result}"
+
+
+def test_issue_with_91_character_preview_is_too_long():
+    issue_text = read_issue("issues/issue-02-long-preview.md")
+    result = check_issue(issue_text)
+    assert result == ["Preview is too long"], f"expected one too-long problem, got {result}"
+
+
+def test_issue_without_first_name_greeting_is_missing():
+    issue_text = read_issue("issues/issue-03-no-greeting.md")
+    result = check_issue(issue_text)
+    assert result == ["Greeting is missing"], f"expected one missing-greeting problem, got {result}"
+
+
+def test_issue_with_two_links_has_more_than_one_link():
+    issue_text = read_issue("issues/issue-04-two-links.md")
+    result = check_issue(issue_text)
+    assert result == ["More than one link"], f"expected one too-many-links problem, got {result}"
+
+
+def test_issue_without_greeting_or_footer_has_two_problems():
+    issue_text = read_issue("issues/issue-05-no-greeting-no-footer.md")
+    result = check_issue(issue_text)
+    expected = ["Greeting is missing", "Footer is missing"]
+    assert result == expected, f"expected {expected}, got {result}"

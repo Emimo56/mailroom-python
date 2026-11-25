@@ -90,6 +90,65 @@ def check_subject(issue_text):
     return problems
 
 
+def check_preview(issue_text):
+    lines = issue_text.split("\n")
+    preview_line = None
+    for line in lines:
+        if line.startswith("Preview:"):
+            preview_line = line
+            break
+
+    problems = []
+    if preview_line is None:
+        return problems
+
+    preview = preview_line[len("Preview:"):].strip()
+    if len(preview) > 90:
+        problems.append("Preview is too long")
+    return problems
+
+
+def check_greeting(issue_text):
+    problems = []
+    if "{{first_name}}" not in issue_text:
+        problems.append("Greeting is missing")
+    return problems
+
+
+def check_links(issue_text):
+    problems = []
+    link_count = issue_text.count("](http")
+    if link_count > 1:
+        problems.append("More than one link")
+    return problems
+
+
+def check_footer(issue_text):
+    lines = issue_text.split("\n")
+    has_footer_line = False
+    for line in lines:
+        if line.startswith("You're getting this because"):
+            has_footer_line = True
+            break
+
+    has_unsubscribe = "Unsubscribe:" in issue_text
+
+    problems = []
+    if not has_footer_line or not has_unsubscribe:
+        problems.append("Footer is missing")
+    return problems
+
+
+def check_issue(issue_text):
+    problems = []
+    problems = problems + check_subject(issue_text)
+    problems = problems + check_preview(issue_text)
+    problems = problems + check_greeting(issue_text)
+    problems = problems + check_links(issue_text)
+    problems = problems + check_footer(issue_text)
+    return problems
+
+
 def next_send_date(run_date):
     if run_date.month == 12:
         year = run_date.year + 1
@@ -142,3 +201,15 @@ if __name__ == "__main__":
             print(build_subscribers_report(text))
     elif command == "next-send":
         print(next_send_date(run_date))
+    elif command == "check":
+        path = options[0]
+        file = open(path)
+        issue_text = file.read()
+        file.close()
+        problems = check_issue(issue_text)
+        if problems:
+            for problem in problems:
+                print(problem)
+            sys.exit(1)
+        else:
+            print("OK")
