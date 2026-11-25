@@ -131,3 +131,9 @@ Q: `check_footer` only checks that the substring `"Unsubscribe:"` appears anywhe
 A: Yes, require both.
 
 ---
+
+Q: How should subject length be counted when the subject contains an emoji like 👍🏽, which is actually two Unicode code points (thumbs up + skin tone modifier) that display as one character?
+
+A: Count length as Python's `len()` counts it — code points, not visible characters. So that emoji counts as 2, not 1.
+
+---

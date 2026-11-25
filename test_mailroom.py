@@ -101,6 +101,16 @@ def test_no_subject_line_at_all_is_missing():
     assert result == ["Subject line is missing"], f"expected one missing problem, got {result}"
 
 
+def test_subject_length_counts_emoji_as_two_characters():
+    # "\U0001F44D\U0001F3FD" is one emoji (thumbs up + skin tone) that a
+    # person sees as 1 character, but Python's len() counts it as 2.
+    # 2 (emoji) + 1 (space) + 48 (rest) = 51 by len() -- over the limit --
+    # even though a person counting visible characters would get 50.
+    issue_text = "Subject: \U0001F44D\U0001F3FD Thanks so much for joining the Steep Club family\n"
+    result = check_subject(issue_text)
+    assert result == ["Subject is too long"], f"expected one too-long problem, got {result}"
+
+
 def test_no_preview_line_at_all_is_missing():
     issue_text = "Subject: The Steep Club opens Monday\n"
     result = check_preview(issue_text)
