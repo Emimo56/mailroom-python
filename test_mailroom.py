@@ -9,6 +9,8 @@ from mailroom import (
     count_subscribers_since,
     next_send_date,
     check_subject,
+    check_preview,
+    check_links,
     check_issue,
 )
 
@@ -97,6 +99,18 @@ def test_no_subject_line_at_all_is_missing():
     issue_text = "Preview: Your monthly tea box, chosen by our blenders.\n"
     result = check_subject(issue_text)
     assert result == ["Subject line is missing"], f"expected one missing problem, got {result}"
+
+
+def test_no_preview_line_at_all_is_missing():
+    issue_text = "Subject: The Steep Club opens Monday\n"
+    result = check_preview(issue_text)
+    assert result == ["Preview line is missing"], f"expected one missing problem, got {result}"
+
+
+def test_no_link_at_all_is_missing():
+    issue_text = "Hi {{first_name}},\n\nNo link here.\n"
+    result = check_links(issue_text)
+    assert result == ["Link is missing"], f"expected one missing-link problem, got {result}"
 
 
 def read_issue(path):

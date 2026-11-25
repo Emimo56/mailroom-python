@@ -89,3 +89,21 @@ Q: Check the other rules in `docs/email-rules.md` (preview length, greeting, lin
 A: Created four sample issue files under `issues/` (`issue-02-long-preview.md`, `issue-03-no-greeting.md`, `issue-04-two-links.md`, `issue-05-no-greeting-no-footer.md`), then wrote the five tests first in `test_mailroom.py`, importing a new `check_issue` from `mailroom` — ran `uv run pytest test_mailroom.py -v` and got `ImportError: cannot import name 'check_issue'` since it didn't exist yet. Then wrote four small helper functions in `mailroom.py` (`check_preview`, `check_greeting`, `check_links`, `check_footer`) plus `check_issue`, which runs `check_subject` then those four, in that order, and returns the combined list of problems. `check_links` counts `"](http"` in the text, which matches a link written as either `[text](http://...)` or `[text](https://...)`, since both start with `http`; more than one such match is a problem. `check_footer` is one problem (not two) if either the `"You're getting this because"` line or the `"Unsubscribe:"` text is missing. All 19 tests pass. Also added the `check` command to `mailroom.py`'s CLI, which reads the given file, runs `check_issue` on it, prints each problem on its own line and exits 1 if there are any, or prints `OK` and exits 0 otherwise — ran it by hand against `issue-01.md` (`OK`, exit 0) and `issue-05-no-greeting-no-footer.md` (both problems printed, exit 1) to confirm.
 
 ---
+
+Q: Test the checks outside the project (temporary broken copies, not committed): a 91-character preview, two links, no footer. Does each one find exactly the right problem?
+
+A: Ran `uv run pytest` (19 passed) and `uv run mailroom.py check issues/issue-01.md` (`OK`). Built three broken copies in a scratch folder outside the project and ran the check on each: the 91-character preview got only `"Preview is too long"`, the two-link copy got only `"More than one link"`, the no-footer copy got only `"Footer is missing"` — each one flagged exactly its own problem, nothing else.
+
+---
+
+Q: Two assumptions `mailroom.py` makes that `docs/email-rules.md` doesn't say anything about: should a missing `Preview:` line be a problem, and should zero links be a problem?
+
+A: Yes to both — a missing Preview line should be flagged, and so should having no link at all. Before this, `check_preview` silently treated "no Preview line" as fine (unlike `check_subject`, which does flag a missing Subject line), and `check_links` only ever checked for *more than* one link, never for zero.
+
+---
+
+Q: Write the two missing-preview and missing-link tests as failing first, then fix the code.
+
+A: Added `test_no_preview_line_at_all_is_missing` (expects `["Preview line is missing"]`) and `test_no_link_at_all_is_missing` (expects `["Link is missing"]`) to `test_mailroom.py` — ran `uv run pytest` and both failed (`check_preview` and `check_links` returned `[]`), while the 19 existing tests still passed. Then fixed `mailroom.py`: `check_preview` now appends `"Preview line is missing"` when there's no Preview line (instead of returning early with no problems), and `check_links` now appends `"Link is missing"` when the link count is `0` (instead of only checking for more than one). All 21 tests pass.
+
+---

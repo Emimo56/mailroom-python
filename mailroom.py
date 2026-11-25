@@ -100,6 +100,7 @@ def check_preview(issue_text):
 
     problems = []
     if preview_line is None:
+        problems.append("Preview line is missing")
         return problems
 
     preview = preview_line[len("Preview:"):].strip()
@@ -118,7 +119,9 @@ def check_greeting(issue_text):
 def check_links(issue_text):
     problems = []
     link_count = issue_text.count("](http")
-    if link_count > 1:
+    if link_count == 0:
+        problems.append("Link is missing")
+    elif link_count > 1:
         problems.append("More than one link")
     return problems
 
