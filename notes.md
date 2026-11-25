@@ -107,3 +107,15 @@ Q: Write the two missing-preview and missing-link tests as failing first, then f
 A: Added `test_no_preview_line_at_all_is_missing` (expects `["Preview line is missing"]`) and `test_no_link_at_all_is_missing` (expects `["Link is missing"]`) to `test_mailroom.py` — ran `uv run pytest` and both failed (`check_preview` and `check_links` returned `[]`), while the 19 existing tests still passed. Then fixed `mailroom.py`: `check_preview` now appends `"Preview line is missing"` when there's no Preview line (instead of returning early with no problems), and `check_links` now appends `"Link is missing"` when the link count is `0` (instead of only checking for more than one). All 21 tests pass.
 
 ---
+
+Q: `check_links` only counts a link if it sees the literal text `](http` — a Markdown-style link. Should "link" mean specifically that, or any URL-like text in the issue?
+
+A: Any URL in the issue — not just Markdown-style `[text](http...)` links. A bare URL like `https://example.com` with no square brackets should also count.
+
+---
+
+Q: `check_footer` requires the exact phrase `"You're getting this because"` plus the literal text `"Unsubscribe:"`. Should the footer check require that specific wording, or just that some footer-like disclosure and an unsubscribe mention are present, in any wording?
+
+A: Any wording — it just needs some disclosure and some mention of unsubscribing, not that exact phrase.
+
+---
