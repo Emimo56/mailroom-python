@@ -10,7 +10,9 @@ from mailroom import (
     next_send_date,
     check_subject,
     check_preview,
+    check_greeting,
     check_links,
+    check_footer,
     check_issue,
 )
 
@@ -101,6 +103,13 @@ def test_no_subject_line_at_all_is_missing():
     assert result == ["Subject line is missing"], f"expected one missing problem, got {result}"
 
 
+def test_subject_not_on_first_line_must_be_first():
+    issue_text = "\nSubject: The Steep Club opens Monday\n"
+    result = check_subject(issue_text)
+    expected = ["Subject line must be the first line."]
+    assert result == expected, f"expected {expected}, got {result}"
+
+
 def test_subject_length_counts_emoji_as_two_characters():
     # "\U0001F44D\U0001F3FD" is one emoji (thumbs up + skin tone) that a
     # person sees as 1 character, but Python's len() counts it as 2.
@@ -121,6 +130,83 @@ def test_no_link_at_all_is_missing():
     issue_text = "Hi {{first_name}},\n\nNo link here.\n"
     result = check_links(issue_text)
     assert result == ["Link is missing"], f"expected one missing-link problem, got {result}"
+
+
+def test_bare_url_with_no_brackets_counts_as_a_link():
+    issue_text = "Hi {{first_name}},\n\nVisit https://kettlebird.example/steep-club for tea.\n"
+    result = check_links(issue_text)
+    assert result == [], f"expected no problems, got {result}"
+
+
+def test_two_bare_urls_is_more_than_one_link():
+    issue_text = (
+        "Hi {{first_name}},\n\n"
+        "Visit https://kettlebird.example/steep-club or https://kettlebird.example/blog.\n"
+    )
+    result = check_links(issue_text)
+    assert result == ["More than one link"], f"expected one too-many-links problem, got {result}"
+
+
+def test_footer_unsubscribe_link_does_not_count_toward_link_limit():
+    issue_text = (
+        "Hi {{first_name}},\n\n"
+        "[Join The Steep Club](https://kettlebird.example/steep-club)\n\n"
+        "Steep well,\n"
+        "The Kettlebird Tea team\n\n"
+        "You're getting this because you joined the waitlist.\n"
+        "Unsubscribe here: https://kettlebird.example/unsub?u={{unsubscribe_url}}\n"
+    )
+    result = check_links(issue_text)
+    assert result == [], f"expected no problems, got {result}"
+
+
+def test_greeting_placeholder_outside_a_hi_line_is_missing():
+    issue_text = (
+        "Subject: The Steep Club opens Monday\n"
+        "Preview: {{first_name}}, your tea box is here.\n\n"
+        "Hi there,\n\n"
+        "Welcome to the club.\n"
+    )
+    result = check_greeting(issue_text)
+    assert result == ["Greeting is missing"], f"expected one missing-greeting problem, got {result}"
+
+
+def test_greeting_on_a_hi_line_has_no_problems():
+    issue_text = "Hi {{first_name}},\n\nWelcome to the club.\n"
+    result = check_greeting(issue_text)
+    assert result == [], f"expected no problems, got {result}"
+
+
+def test_footer_accepts_any_wording_on_each_line():
+    issue_text = (
+        "Steep well,\n"
+        "The Kettlebird Tea team\n\n"
+        "We email you because you signed up for Steep Club updates.\n"
+        "Stop these emails: {{unsubscribe_url}}\n"
+    )
+    result = check_footer(issue_text)
+    assert result == [], f"expected no problems, got {result}"
+
+
+def test_footer_without_the_unsubscribe_placeholder_is_missing():
+    issue_text = (
+        "Steep well,\n"
+        "The Kettlebird Tea team\n\n"
+        "You're getting this because you joined the waitlist.\n"
+        "Unsubscribe: https://kettlebird.example/unsub\n"
+    )
+    result = check_footer(issue_text)
+    assert result == ["Footer is missing"], f"expected one missing problem, got {result}"
+
+
+def test_footer_not_at_the_end_of_file_is_missing():
+    issue_text = (
+        "You're getting this because you joined the waitlist.\n"
+        "Unsubscribe: {{unsubscribe_url}}\n\n"
+        "P.S. Tell a friend!\n"
+    )
+    result = check_footer(issue_text)
+    assert result == ["Footer is missing"], f"expected one missing problem, got {result}"
 
 
 def read_issue(path):

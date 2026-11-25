@@ -137,3 +137,9 @@ Q: How should subject length be counted when the subject contains an emoji like 
 A: Count length as Python's `len()` counts it — code points, not visible characters. So that emoji counts as 2, not 1.
 
 ---
+
+Q: Five earlier decisions had been recorded but never implemented in `mailroom.py` — should they be turned into code now: bare URLs counting as links, any wording accepted for the footer's two lines, footer links excluded from the one-link limit, the footer requiring the `{{unsubscribe_url}}` placeholder and end-of-file position, and the Subject line having to be the file's first line? Also, where must `{{first_name}}` appear to count as a real greeting, and what should "any wording" concretely mean for the footer check?
+
+A: Yes to all five. Greeting: only on a line that starts with `"Hi"` — `{{first_name}}` appearing anywhere else in the file doesn't count. Footer: keep the two-line shape (a disclosure line, then an unsubscribe line), but neither has to match exact wording — the unsubscribe line just needs to mention "unsubscribe" (any case) and contain the literal `{{unsubscribe_url}}` placeholder, and the disclosure line just needs to be non-empty. `check_links` now counts occurrences of `"http://"` or `"https://"` instead of only `"](http"`, so a bare URL counts; it also runs only on the text before the footer, so a link inside the footer doesn't count toward the limit.
+
+---

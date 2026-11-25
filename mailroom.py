@@ -71,17 +71,21 @@ def count_subscribers_since(text, since_date, run_date):
 
 def check_subject(issue_text):
     lines = issue_text.split("\n")
-    subject_line = None
-    for line in lines:
-        if line.startswith("Subject:"):
-            subject_line = line
-            break
 
     problems = []
-    if subject_line is None:
-        problems.append("Subject line is missing")
+    if len(lines) == 0 or not lines[0].startswith("Subject:"):
+        found_elsewhere = False
+        for line in lines[1:]:
+            if line.startswith("Subject:"):
+                found_elsewhere = True
+                break
+        if found_elsewhere:
+            problems.append("Subject line must be the first line.")
+        else:
+            problems.append("Subject line is missing")
         return problems
 
+    subject_line = lines[0]
     subject = subject_line[len("Subject:"):].strip()
     if subject == "":
         problems.append("Subject is empty")
@@ -110,17 +114,52 @@ def check_preview(issue_text):
 
 
 def check_greeting(issue_text):
+    lines = issue_text.split("\n")
+    has_greeting_line = False
+    for line in lines:
+        if line.startswith("Hi") and "{{first_name}}" in line:
+            has_greeting_line = True
+            break
+
     problems = []
-    if "{{first_name}}" not in issue_text:
+    if not has_greeting_line:
         problems.append("Greeting is missing")
     return problems
 
 
+def split_off_footer(issue_text):
+    lines = issue_text.split("\n")
+    while len(lines) > 0 and lines[-1].strip() == "":
+        lines = lines[:-1]
+
+    if len(lines) < 2:
+        return issue_text, False
+
+    disclosure_line = lines[-2]
+    unsubscribe_line = lines[-1]
+    has_disclosure = disclosure_line.strip() != ""
+    has_unsubscribe = (
+        "unsubscribe" in unsubscribe_line.lower()
+        and "{{unsubscribe_url}}" in unsubscribe_line
+    )
+
+    if has_disclosure and has_unsubscribe:
+        body_lines = lines[:-2]
+        body_text = "\n".join(body_lines)
+        return body_text, True
+
+    return issue_text, False
+
+
 def check_links(issue_text):
+    body_text, _ = split_off_footer(issue_text)
+
     link_count = 0
     i = 0
-    while i < len(issue_text):
-        if issue_text[i:i + len("](http")] == "](http":
+    while i < len(body_text):
+        if body_text[i:i + len("http://")] == "http://":
+            link_count = link_count + 1
+        elif body_text[i:i + len("https://")] == "https://":
             link_count = link_count + 1
         i = i + 1
 
@@ -133,17 +172,10 @@ def check_links(issue_text):
 
 
 def check_footer(issue_text):
-    lines = issue_text.split("\n")
-    has_footer_line = False
-    for line in lines:
-        if line.startswith("You're getting this because"):
-            has_footer_line = True
-            break
-
-    has_unsubscribe = "Unsubscribe:" in issue_text
+    _, has_footer = split_off_footer(issue_text)
 
     problems = []
-    if not has_footer_line or not has_unsubscribe:
+    if not has_footer:
         problems.append("Footer is missing")
     return problems
 
